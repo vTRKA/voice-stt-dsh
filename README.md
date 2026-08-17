@@ -2,7 +2,7 @@
 
 This installable plugin adds Russian browser speech input to the DeepSeek Harness composer. It keeps the recognized text in the draft; sending remains an explicit user action.
 
-The package includes the Windows `nemo-speech.exe` companion. The host plugin starts it on demand, reuses it while the Web UI is running, and stops it when the plugin unloads. The companion listens on `127.0.0.1:8080`.
+The package includes the Windows `nemo-speech.exe` companion. The host plugin starts it only after the microphone is invoked, and stops it when recording ends or the plugin unloads. The companion listens on `127.0.0.1:8080`.
 
 ## Install
 
@@ -29,6 +29,10 @@ source and provide its published SHA-256 checksum:
 
 Until the model is installed, DSH starts normally and the microphone remains
 unavailable. A failed or missing voice runtime never prevents the main app from loading.
+
+The Parakeet TDT v3 model is offline-only. When it is used, the plugin records
+between the two button/shortcut presses and submits one local WAV for final
+transcription on the second press. A streaming model can provide interim text.
 
 ## Update or remove
 

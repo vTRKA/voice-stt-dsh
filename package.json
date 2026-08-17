@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-parakeet-voice-input",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Russian browser voice input for DeepSeek Harness using the local Parakeet runtime",
   "type": "module",
   "main": "lib/index.js",
