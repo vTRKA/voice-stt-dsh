@@ -36,6 +36,9 @@ macOS. Press it once to start recording and once again to finish.
 
 Right-click the microphone to choose another shortcut. The new shortcut must
 include `Ctrl`, `Alt`, `Shift`, or `Command`, and is saved in the browser.
+You can also open **Settings → Plugins → Parakeet Voice Input** and change the
+shortcut there. That settings page is the recommended way to configure it;
+clicking the microphone is only for starting or stopping a recording.
 
 ## Install the model
 
