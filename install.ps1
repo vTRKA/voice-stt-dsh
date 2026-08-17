@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
   [string]$Profile = 'desktop',
-  [string]$Repository = 'github:vTRKA/voice-sst-dsh'
+  [string]$Repository = 'github:vTRKA/voice-stt-dsh'
 )
 
 $ErrorActionPreference = 'Stop'
