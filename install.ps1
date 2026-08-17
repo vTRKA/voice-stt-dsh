@@ -9,7 +9,7 @@ if (-not (Get-Command dsh -ErrorAction SilentlyContinue)) {
   throw 'The dsh command is not available on PATH. Install DeepSeek Harness first.'
 }
 
-& dsh plugin --profile $Profile add 'github:vTRKA/voice-dsh'
+& dsh plugin --profile $Profile add 'github:vTRKA/voice-sst-dsh'
 if ($LASTEXITCODE -ne 0) {
   throw "dsh plugin installation failed with exit code $LASTEXITCODE."
 }

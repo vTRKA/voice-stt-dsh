@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-parakeet-voice-input",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Russian browser voice input for DeepSeek Harness using the local Parakeet runtime",
   "type": "module",
   "main": "lib/index.js",
@@ -15,6 +15,7 @@
     "runtime/nemo-speech.exe",
     "cordis.patch.yml",
     "README.md",
+    "install-model.ps1",
     "LICENSE"
   ],
   "dsh": {

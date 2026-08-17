@@ -9,7 +9,7 @@ The package includes the Windows `nemo-speech.exe` companion. The host plugin st
 From the directory containing the `dsh` profile:
 
 ```powershell
-dsh plugin --profile desktop add github:vTRKA/voice-dsh
+dsh plugin --profile desktop add github:vTRKA/voice-sst-dsh
 ```
 
 The package declares its own `dsh.bundle` patch, so the plugin row is added automatically. Restart `dsh --profile desktop` after installation.
@@ -18,6 +18,31 @@ PowerShell users can run the included installer (the profile defaults to `deskto
 
 ```powershell
 .\install.ps1
+```
+
+The plugin does not download a model silently. Download it only from a trusted
+source and provide its published SHA-256 checksum:
+
+```powershell
+.\install-model.ps1 -Url 'https://trusted.example/parakeet-tdt-0.6b-v3.q8_0.gguf' -Sha256 '<64-hex-checksum>'
+```
+
+Until the model is installed, DSH starts normally and the microphone remains
+unavailable. A failed or missing voice runtime never prevents the main app from loading.
+
+## Update or remove
+
+The plugin does not update itself silently. To update it:
+
+```powershell
+dsh plugin --profile desktop update @local/dsh-parakeet-voice-input
+```
+
+Then restart DSH. The update replaces only the plugin package; the model under
+`$DSH_HOME/models` is preserved. To remove the plugin:
+
+```powershell
+dsh plugin --profile desktop remove @local/dsh-parakeet-voice-input
 ```
 
 For a local checkout:
