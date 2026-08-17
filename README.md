@@ -1,121 +1,89 @@
-# Голосовой ввод Parakeet для DeepSeek Harness
+# Parakeet voice input for DeepSeek Harness
 
-Плагин добавляет кнопку микрофона в поле сообщения DeepSeek Harness. Он
-работает локально на компьютере и не отправляет звук в интернет.
+This plugin adds a local microphone button to the DeepSeek Harness composer.
+Audio stays on the user's computer. The plugin never sends a message by itself.
 
-## Самый короткий путь
+## Quick start
 
-1. Установите DeepSeek Harness.
-2. Откройте PowerShell в этой папке и запустите:
+1. Install DeepSeek Harness.
+2. Open PowerShell in this folder and run:
 
    ```powershell
    .\install.ps1
    ```
 
-3. Установите файл модели Parakeet в папку `$DSH_HOME/models` с помощью
-   [инструкции ниже](#установка-модели).
-4. Перезапустите DSH.
-5. В чате нажмите кнопку микрофона один раз и говорите.
-6. Нажмите кнопку ещё раз. Текст появится в поле сообщения.
-7. Проверьте текст и нажмите обычную кнопку **Send**.
+3. Install the model using [Install the model](#install-the-model).
+4. Restart DSH.
+5. Click the microphone once, speak, and click it again.
+6. Review the transcript in the draft and press **Send**.
 
-Удерживать кнопку или клавишу не нужно. Голосовой ввод не отправляет сообщение
-самостоятельно.
+You do not need to hold the button or the shortcut.
 
-## Клавиша
+## Shortcut
 
-По умолчанию используется `Ctrl+Shift+E` на Windows/Linux и
-`Command+Shift+E` на macOS. Нажатие один раз начинает запись, повторное
-нажатие заканчивает её.
+The default two-key shortcut is `Ctrl+E` on Windows/Linux and `Command+E` on
+macOS. Press it once to start recording and once again to finish.
 
-Если комбинация неудобна, щёлкните по микрофону правой кнопкой мыши и нажмите
-новую комбинацию с `Ctrl`, `Alt`, `Shift` или `Command`. Выбор сохраняется в
-браузере. Старая комбинация `Ctrl+E` при обновлении автоматически заменяется:
-браузеры часто забирают её себе.
+Right-click the microphone to choose another shortcut. The new shortcut must
+include `Ctrl`, `Alt`, `Shift`, or `Command`, and is saved in the browser.
 
-## Установка
+## Install the model
 
-Обычная установка для профиля `desktop`:
-
-```powershell
-.\install.ps1
-```
-
-Или вручную:
-
-```powershell
-dsh plugin --profile desktop add github:vTRKA/voice-sst-dsh
-```
-
-После установки перезапустите DSH. Плагин устанавливает локальный companion,
-но не скачивает большую модель без вашего подтверждения.
-
-## Установка модели
-
-Модель Parakeet TDT v3 работает offline: звук остаётся на компьютере. Для
-безопасности установщик требует адрес доверенного источника и SHA-256 модели:
+The Parakeet model runs offline. Audio stays on the computer. For safe
+installation, provide a trusted download URL and the model publisher's SHA-256
+checksum:
 
 ```powershell
 .\install-model.ps1 `
   -Url 'https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3/resolve/main/parakeet-tdt-0.6b-v3.q8_0.gguf?download=true' `
-  -Sha256 '<64-символа SHA-256 от издателя модели>'
+  -Sha256 '<64-character SHA-256 checksum>'
 ```
 
-Если модель не установлена, DSH всё равно запустится, но кнопка микрофона
-останется недоступной. Установщик сначала скачивает временный файл, проверяет
-его checksum и только потом заменяет модель — повреждённый файл не становится
-активным.
+If the model is missing, DSH still starts normally and the microphone remains
+disabled. The installer verifies the checksum before replacing the active file.
 
-## Что происходит во время записи
+## How recording works
 
-- Первый клик запускает локальный companion и включает микрофон.
-- Второй клик останавливает запись.
-- При offline-модели накопленный звук отправляется локальному серверу как WAV,
-  после чего готовый текст вставляется в черновик.
-- После завершения записи companion останавливается.
-- Если приложение закрыть во время записи, микрофон и локальный процесс будут
-  освобождены.
+- The first click starts the local companion and microphone capture.
+- The second click stops recording.
+- The offline model receives one local WAV file and returns the final transcript.
+- The transcript is inserted into the draft; sending remains a separate action.
+- The companion stops after recording ends or when the plugin unloads.
 
-Для offline-модели промежуточные слова во время речи не показываются. Это
-нормально: окончательный текст появляется после второго нажатия. Live-текст
-требует отдельной streaming-модели.
+Offline models do not show interim words. The final transcript appears after the
+second click.
 
-## Обновление и удаление
+## Update or remove
 
-Плагин не меняет себя во время работы. Чтобы обновить его:
+Update the installed plugin and then restart DSH:
 
 ```powershell
 dsh plugin --profile desktop update @local/dsh-parakeet-voice-input
 ```
 
-После команды перезапустите DSH. Обновление не удаляет модель в
-`$DSH_HOME/models`.
-
-Чтобы удалить плагин:
+The update preserves the model under `$DSH_HOME/models`. Remove the plugin with:
 
 ```powershell
 dsh plugin --profile desktop remove @local/dsh-parakeet-voice-input
 ```
 
-## Если микрофон сразу выключается
+## Troubleshooting
 
-1. Перезапустите DSH после установки или обновления.
-2. Проверьте, что файл модели лежит в `$DSH_HOME/models/parakeet-tdt-0.6b-v3`.
-3. Проверьте разрешение браузера на использование микрофона.
-4. Убедитесь, что другой процесс не занял порт `8080`.
-5. Нажмите микрофон один раз, подождите секунду и только потом начинайте
-   говорить.
+If the microphone stops immediately:
 
-Если модель offline-only, сообщение появится после второго нажатия — это не
-означает, что нужен интернет.
+1. Restart DSH after installing or updating the plugin.
+2. Check that the model exists under `$DSH_HOME/models/parakeet-tdt-0.6b-v3`.
+3. Check the browser microphone permission.
+4. Make sure port `8080` is not used by another process.
+5. Click once, wait a second, and then speak.
 
-## Требования
+## Requirements
 
 - DeepSeek Harness Web profile;
-- Windows x64 (в пакет входит Windows companion);
-- браузер с поддержкой микрофона и Web Audio.
+- Windows x64 (the package includes a Windows companion);
+- a browser with microphone and Web Audio support.
 
-Проверка пакета перед публикацией:
+Verify the package before publishing:
 
 ```powershell
 node scripts/verify-package.mjs
