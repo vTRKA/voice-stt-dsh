@@ -1,72 +1,122 @@
-# Parakeet voice input for DeepSeek Harness
+# Голосовой ввод Parakeet для DeepSeek Harness
 
-This installable plugin adds Russian browser speech input to the DeepSeek Harness composer. It keeps the recognized text in the draft; sending remains an explicit user action.
+Плагин добавляет кнопку микрофона в поле сообщения DeepSeek Harness. Он
+работает локально на компьютере и не отправляет звук в интернет.
 
-The package includes the Windows `nemo-speech.exe` companion. The host plugin starts it only after the microphone is invoked, and stops it when recording ends or the plugin unloads. The companion listens on `127.0.0.1:8080`.
+## Самый короткий путь
 
-## Install
+1. Установите DeepSeek Harness.
+2. Откройте PowerShell в этой папке и запустите:
 
-From the directory containing the `dsh` profile:
+   ```powershell
+   .\install.ps1
+   ```
 
-```powershell
-dsh plugin --profile desktop add github:vTRKA/voice-sst-dsh
-```
+3. Установите файл модели Parakeet в папку `$DSH_HOME/models` с помощью
+   [инструкции ниже](#установка-модели).
+4. Перезапустите DSH.
+5. В чате нажмите кнопку микрофона один раз и говорите.
+6. Нажмите кнопку ещё раз. Текст появится в поле сообщения.
+7. Проверьте текст и нажмите обычную кнопку **Send**.
 
-The package declares its own `dsh.bundle` patch, so the plugin row is added automatically. Restart `dsh --profile desktop` after installation.
+Удерживать кнопку или клавишу не нужно. Голосовой ввод не отправляет сообщение
+самостоятельно.
 
-PowerShell users can run the included installer (the profile defaults to `desktop`):
+## Клавиша
+
+По умолчанию используется `Ctrl+Shift+E` на Windows/Linux и
+`Command+Shift+E` на macOS. Нажатие один раз начинает запись, повторное
+нажатие заканчивает её.
+
+Если комбинация неудобна, щёлкните по микрофону правой кнопкой мыши и нажмите
+новую комбинацию с `Ctrl`, `Alt`, `Shift` или `Command`. Выбор сохраняется в
+браузере. Старая комбинация `Ctrl+E` при обновлении автоматически заменяется:
+браузеры часто забирают её себе.
+
+## Установка
+
+Обычная установка для профиля `desktop`:
 
 ```powershell
 .\install.ps1
 ```
 
-The plugin does not download a model silently. Download it only from a trusted
-source and provide its published SHA-256 checksum:
+Или вручную:
 
 ```powershell
-.\install-model.ps1 -Url 'https://trusted.example/parakeet-tdt-0.6b-v3.q8_0.gguf' -Sha256 '<64-hex-checksum>'
+dsh plugin --profile desktop add github:vTRKA/voice-sst-dsh
 ```
 
-Until the model is installed, DSH starts normally and the microphone remains
-unavailable. A failed or missing voice runtime never prevents the main app from loading.
+После установки перезапустите DSH. Плагин устанавливает локальный companion,
+но не скачивает большую модель без вашего подтверждения.
 
-The Parakeet TDT v3 model is offline-only. When it is used, the plugin records
-between the two button/shortcut presses and submits one local WAV for final
-transcription on the second press. A streaming model can provide interim text.
+## Установка модели
 
-## Update or remove
+Модель Parakeet TDT v3 работает offline: звук остаётся на компьютере. Для
+безопасности установщик требует адрес доверенного источника и SHA-256 модели:
 
-The plugin does not update itself silently. To update it:
+```powershell
+.\install-model.ps1 `
+  -Url 'https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3/resolve/main/parakeet-tdt-0.6b-v3.q8_0.gguf?download=true' `
+  -Sha256 '<64-символа SHA-256 от издателя модели>'
+```
+
+Если модель не установлена, DSH всё равно запустится, но кнопка микрофона
+останется недоступной. Установщик сначала скачивает временный файл, проверяет
+его checksum и только потом заменяет модель — повреждённый файл не становится
+активным.
+
+## Что происходит во время записи
+
+- Первый клик запускает локальный companion и включает микрофон.
+- Второй клик останавливает запись.
+- При offline-модели накопленный звук отправляется локальному серверу как WAV,
+  после чего готовый текст вставляется в черновик.
+- После завершения записи companion останавливается.
+- Если приложение закрыть во время записи, микрофон и локальный процесс будут
+  освобождены.
+
+Для offline-модели промежуточные слова во время речи не показываются. Это
+нормально: окончательный текст появляется после второго нажатия. Live-текст
+требует отдельной streaming-модели.
+
+## Обновление и удаление
+
+Плагин не меняет себя во время работы. Чтобы обновить его:
 
 ```powershell
 dsh plugin --profile desktop update @local/dsh-parakeet-voice-input
 ```
 
-Then restart DSH. The update replaces only the plugin package; the model under
-`$DSH_HOME/models` is preserved. To remove the plugin:
+После команды перезапустите DSH. Обновление не удаляет модель в
+`$DSH_HOME/models`.
+
+Чтобы удалить плагин:
 
 ```powershell
 dsh plugin --profile desktop remove @local/dsh-parakeet-voice-input
 ```
 
-For a local checkout:
+## Если микрофон сразу выключается
 
-```powershell
-dsh plugin --profile desktop add D:\path\to\voice-dsh
-```
+1. Перезапустите DSH после установки или обновления.
+2. Проверьте, что файл модели лежит в `$DSH_HOME/models/parakeet-tdt-0.6b-v3`.
+3. Проверьте разрешение браузера на использование микрофона.
+4. Убедитесь, что другой процесс не занял порт `8080`.
+5. Нажмите микрофон один раз, подождите секунду и только потом начинайте
+   говорить.
 
-## Verify before publishing
+Если модель offline-only, сообщение появится после второго нажатия — это не
+означает, что нужен интернет.
+
+## Требования
+
+- DeepSeek Harness Web profile;
+- Windows x64 (в пакет входит Windows companion);
+- браузер с поддержкой микрофона и Web Audio.
+
+Проверка пакета перед публикацией:
 
 ```powershell
 node scripts/verify-package.mjs
 ```
-
-The check rejects a bundle whose loader handoff ID differs from the package name. This prevents the `loaded without registering` startup failure.
-
-## Requirements
-
-- DeepSeek Harness Web profile
-- Windows x64 (the included companion is a Windows executable)
-- A browser that supports microphone capture and WebSocket
-
-Microphone permission, the local companion, and the model remain local to the user's machine. The plugin does not submit drafts automatically.
