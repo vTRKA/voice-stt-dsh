@@ -1,0 +1,40 @@
+{
+  "name": "@local/dsh-parakeet-voice-input",
+  "version": "1.0.1",
+  "description": "Russian browser voice input for DeepSeek Harness using the local Parakeet runtime",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "runtime/nemo-speech.exe",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ],
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "verify": "node scripts/verify-package.mjs"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  }
+}
