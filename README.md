@@ -14,6 +14,12 @@ dsh plugin --profile desktop add github:vTRKA/voice-dsh
 
 The package declares its own `dsh.bundle` patch, so the plugin row is added automatically. Restart `dsh --profile desktop` after installation.
 
+PowerShell users can run the included installer (the profile defaults to `desktop`):
+
+```powershell
+.\install.ps1
+```
+
 For a local checkout:
 
 ```powershell
